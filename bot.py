@@ -1,6 +1,7 @@
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+import ephem
 from answers import phrasedict, get_answer
-#import time
+
 
 def talk_to_me(bot, update):
     print('Пришло сообщение: {}'.format(update.message.text))
@@ -11,7 +12,7 @@ def show_error(bot, update, error):
 
 def help(bot, update):
     print("Вызван /помощь")
-    bot.sendMessage(update.message.chat_id, text='/start \n/killallhumans \n/showmeyourcat')
+    bot.sendMessage(update.message.chat_id, text='/start \n/killallhumans \n/showmeyourcat \n/planet planetname(eng)')
     print(update.message)
 
 def greet_user(bot,update):
@@ -28,6 +29,35 @@ def kill_allhumans(bot, update):
     print("Вызван /убитьвсехчеловеков")
     bot.sendMessage(update.message.chat_id, text='Убить всех человеков через 3...2...1..')
     print(update.message)
+
+def tell_constellation(bot, update, args):
+    print('Вызван /planet')
+    input = args[0].capitalize()
+    if input == "Mars":
+        planet = ephem.Mars()
+    if input == "Neptune":
+        planet = ephem.Neptune()
+    if input == "Venus":
+        planet = ephem.Venus()
+    if input == "Mercury":
+        planet = ephem.Mercury()
+    if input == "Jupiter":
+        planet = ephem.Jupiter()
+    if input == "Earth":
+        planet = ephem.Earth()
+    if input == "Saturn":
+        planet = ephem.Saturn()
+    if input == "Uranus":
+        planet = ephem.Uranus()
+    planet.compute()
+    print(planet)
+    try:
+        string = ephem.constellation(planet)[1]
+        bot.sendMessage(update.message.chat_id, text = string)
+    except:
+        bot.sendMessage(update.message.chat_id, text = 'Эй, это не планета!')
+
+
     
 def main():
     updater = Updater("326458218:AAEKVLRflUisJUNY5JijTnTObHeacdPBQsQ")
@@ -37,7 +67,7 @@ def main():
     dp.add_handler(CommandHandler('killallhumans', kill_allhumans))
     dp.add_handler(CommandHandler('help', help))
     dp.add_handler(CommandHandler('showmeyourcat', show_me_your_cat))
-    #dp.add_handler(CommandHandler('guessnumber', guess_number))
+    dp.add_handler(CommandHandler('planet',tell_constellation, pass_args = True))
 
     dp.add_handler(MessageHandler([Filters.text], talk_to_me))
 
