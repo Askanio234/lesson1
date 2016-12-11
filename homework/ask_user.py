@@ -8,11 +8,15 @@ def ask_user():
 		except KeyboardInterrupt:
 			print('\nНу пока')
 			break
+
+
 def get_answer():
 	while True:
 		user_say = input('?')
 		print('наверное...')
 		if user_say == 'Пока':
 			break
+
+
 if __name__ == '__main__':
 	ask_user()
